@@ -14,25 +14,26 @@ from sklearn.metrics import mean_squared_error, r2_score
 DATASET_PATH = "dataset/winequality-red.csv"
 df = pd.read_csv(DATASET_PATH, sep=';')
 
+# -----------------------------
+# 2. Feature Selection (No Preprocessing)
+# -----------------------------
+X = df.drop("quality", axis=1)
+y = df["quality"]
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
 # -----------------------------
 # 3. Train Model
 # -----------------------------
 model = LinearRegression()
-model.fit(X_train_scaled, y_train)
+model.fit(X_train, y_train)
 
 # -----------------------------
 # 4. Evaluate Model
 # -----------------------------
-y_pred = model.predict(X_test_scaled)
+y_pred = model.predict(X_test)
 
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
@@ -43,7 +44,7 @@ r2 = r2_score(y_test, y_pred)
 os.makedirs("outputs", exist_ok=True)
 
 joblib.dump(
-    {"model": model, "scaler": scaler},
+    {"model": model},
     "outputs/model.pkl"
 )
 
