@@ -11,19 +11,13 @@ from sklearn.metrics import mean_squared_error, r2_score
 # 1. Load Dataset
 df = pd.read_csv("dataset/winequality-red.csv", sep=';')
 
-# 2. Feature Selection (manual)
-selected_features = [
-    "alcohol",
-    "sulphates",
-    "volatile acidity",
-    "citric acid"
-]
-
-X = df[selected_features]
+# 2. Feature Selection
+X = df.drop("quality", axis=1)
 y = df["quality"]
 
+# 70/30 split
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y, test_size=0.3, random_state=42
 )
 
 # 3. Train Model
@@ -37,7 +31,7 @@ r2 = r2_score(y_test, y_pred)
 
 # 5. Save Outputs
 os.makedirs("outputs", exist_ok=True)
-joblib.dump({"model": model, "features": selected_features}, "outputs/model.pkl")
+joblib.dump({"model": model}, "outputs/model.pkl")
 
 with open("outputs/results.json", "w") as f:
     json.dump({"MSE": mse, "R2": r2}, f, indent=4)
